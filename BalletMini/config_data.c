@@ -1,5 +1,7 @@
-#include "..\inc\swilib.h"
-#include "..\inc\cfg_items.h"
+#include <swilib.h>
+#include <cfg_items.h>
+
+__CFG_BEGIN(0)
 
 __root const CFG_HDR cfghdr0={CFG_LEVEL,"Main settings",1,0};
 
@@ -139,3 +141,4 @@ __root const int authcode_create_new = 0;
   
 __root const CFG_HDR cfghdr35_end={CFG_LEVEL,"",0,0};
 
+__CFG_END(0)

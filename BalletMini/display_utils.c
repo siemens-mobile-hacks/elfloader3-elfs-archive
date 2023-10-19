@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "view.h"
 #include "display_utils.h"
 #include "siemens_unicode.h"
@@ -926,7 +926,7 @@ void FreeTemplates(void)
   templates_chars=NULL;
 }
 
-SaveTextToTemplate(WSHDR* ws)
+void SaveTextToTemplate(WSHDR* ws)
 {
   int hFile;
   unsigned int io_error;
@@ -934,10 +934,10 @@ SaveTextToTemplate(WSHDR* ws)
   ws2ascii(s, ws);
   strcat(s,"\n");
   char * templates_file = getSymbolicPath("$ballet\\templates.txt");
-  if ((hFile = fopen(templates_file, A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE, &io_error)) != -1)
+  if ((hFile = _open(templates_file, A_ReadWrite+A_Create+A_Append,P_READ+P_WRITE, &io_error)) != -1)
   {
-    fwrite(hFile,s,strlen(s),&io_error);
-    fclose(hFile,&io_error);
+    _write(hFile,s,strlen(s),&io_error);
+    _close(hFile,&io_error);
   }
   mfree(s);
 }
@@ -946,8 +946,8 @@ int LoadTemplates()
 {
   FSTATS fstat;
   int hFile;
-  unsigned int io_error = NULL;
-  int templates_num = NULL;
+  unsigned int io_error = 0;
+  int templates_num = 0;
   char * p;
   char * pp;
   int c;
@@ -958,11 +958,11 @@ int LoadTemplates()
   {
     if (fstat.size > 0)
     {
-      if ((hFile = fopen(templates_file, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
+      if ((hFile = _open(templates_file, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
       {
         p = templates_chars = malloc(fstat.size + 1);
-        p[fread(hFile, p, fstat.size, &io_error)] = NULL;
-        fclose(hFile, &io_error);
+        p[_read(hFile, p, fstat.size, &io_error)] = 0;
+        _close(hFile, &io_error);
         pp = p;
         for(;;)
         {
@@ -976,7 +976,7 @@ int LoadTemplates()
             }
             pp = NULL;
             if (!c) break;
-            *p = NULL;
+            *p = 0;
           }
           else
           {
@@ -1253,7 +1253,7 @@ int CreateInputBox(VIEWDATA *vd, REFCACHE* rf, unsigned int cur_pos_ref)
   wstrcpy(ews,((WSHDR *)rf->data));
   
   PrepareEditControl(&ec);
-  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|(((rf->tag=='p')&&(!cfgPwdNormalText))?ECF_PASSW:NULL),ews,16384);
+  ConstructEditControl(&ec,ECT_NORMAL_TEXT,ECF_APPEND_EOL|(((rf->tag=='p')&&(!cfgPwdNormalText))?ECF_PASSW:0),ews,16384);
   AddEditControlToEditQend(eq,&ec,ma);
 
   FreeWS(ews);

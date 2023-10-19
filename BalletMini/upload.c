@@ -1,11 +1,8 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "view.h"
 #include "string_works.h"
 #include "display_utils.h"
 #include "upload.h"
-
-#pragma swi_number=0x244
-__swi __arm int Base64Encode(void *inbuf, int insize, void *outbuf, int outsize);
 
 const char* file_data_signature = "file=";
 int filesize=0;
@@ -57,7 +54,7 @@ unsigned int FillFileData(REFCACHE* ref, char* buf)
   unsigned int filepos = 0;
   
   
-  if (filesize && ((f=fopen(ref->full_filename,A_ReadOnly+A_BIN,P_READ,&ul))!=-1))
+  if (filesize && ((f=_open(ref->full_filename,A_ReadOnly+A_BIN,P_READ,&ul))!=-1))
   {
     filebuf = (char*)malloc(BUFSIZE+1);
     maxlen = CALCLEN(filesize, strlen(file_data_signature));
@@ -65,7 +62,7 @@ unsigned int FillFileData(REFCACHE* ref, char* buf)
     len = strlen(file_data_signature);
     do
     {
-      filelen=fread(f,filebuf,BUFSIZE,&ul);
+      filelen=_read(f,filebuf,BUFSIZE,&ul);
       filebuf[filelen] = 0;
     
       outlen = Base64Encode(filebuf, filelen, buf+len, maxlen);
@@ -74,7 +71,7 @@ unsigned int FillFileData(REFCACHE* ref, char* buf)
     }
     while (filelen == BUFSIZE);
     mfree(filebuf);
-    fclose(f, &ul);
+    _close(f, &ul);
     ret = len;
   }
   else

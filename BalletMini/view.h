@@ -1,7 +1,7 @@
 #ifndef _VIEW_H_
 #define _VIEW_H_
 
-#include "../inc/pnglist.h"
+#include <pnglist.h>
 
 #define _NOREF (0xFFFFFFFF)
 

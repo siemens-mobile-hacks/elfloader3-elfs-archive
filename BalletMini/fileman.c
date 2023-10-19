@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "string_works.h"
 #include "upload.h"
 #include "fileman.h"

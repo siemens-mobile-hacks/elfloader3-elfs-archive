@@ -43,14 +43,14 @@ wap.lingvo
 S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L 
 */
 
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "parse_oms.h"
 #include "additems.h"
 #include "string_works.h"
 #include "main.h"
 #include "display_utils.h"
 #include "history.h"
-#include "..\inc\zlib.h"
+#include <zlib.h>
 //#include <stdlib.h>
 //#include <string.h>
 //#include <stdio.h>
@@ -60,8 +60,7 @@ extern char AUTH_CODE[128];
 extern int SaveAuthCode(char *prefix, char *code);
 extern const int authcode_write_file;
 
-#pragma inline
-unsigned int _rbyte(VIEWDATA *vd)
+static inline unsigned int _rbyte(VIEWDATA *vd)
 {
   unsigned char *p=(unsigned char *)(vd->oms+vd->oms_pos);
   unsigned int r=*p++;
@@ -229,7 +228,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       vd->pageurl=(char *)malloc(i+1);
       char* ttt = malloc(i+1);
       memcpy(vd->pageurl,vd->oms+vd->oms_pos,i);
-      vd->pageurl[i]=NULL;
+      vd->pageurl[i]=0;
       utf82win(ttt,vd->pageurl);
       strcpy(vd->pageurl, ttt);
       mfree(ttt);
@@ -622,7 +621,7 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
       {
         vd->title=(char *)malloc(i+1);
         memcpy(vd->title,vd->oms+vd->oms_pos,i);
-        vd->title[i]=NULL;
+        vd->title[i]=0;
         utf82win(vd->title, vd->title);
         UpdateCSMname(vd->title, MODE_URL);
         extern int view_url_mode;

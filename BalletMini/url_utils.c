@@ -1,4 +1,4 @@
-#include "..\inc\swilib.h"
+#include <swilib.h>
 #include "url_utils.h"
 
 /* URL handling.

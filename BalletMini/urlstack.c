@@ -1,4 +1,4 @@
-#include "..\inc\swilib.h"
+#include <swilib.h>
 #include "urlstack.h"
 #include "file_works.h"
 #include "string_works.h"
@@ -137,7 +137,7 @@ static void killpage(int n)
 {
   unsigned int err;
   char *fn=pagename(n);
-  unlink(fn,&err);
+  _unlink(fn,&err);
   PageSTACK[n].id=0;
   PageSTACK[n].view_line=0;
   for (int i = 0; i < PageSTACK[n].user_text_counter; i++)

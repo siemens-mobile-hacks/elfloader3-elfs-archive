@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "view.h"
 #include "additems.h"
 #include "readimg.h"

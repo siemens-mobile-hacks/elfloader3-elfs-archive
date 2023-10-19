@@ -1,6 +1,6 @@
-#include "..\inc\swilib.h"
-#include "jpeglib/jpeglib.h"
-#include "jpeglib/jerror.h"
+#include <swilib.h>
+#include <jpeglib/jpeglib.h>
+#include <jpeglib/jerror.h>
 #include "readimg.h"
 
 #define PNG_BYTES_TO_CHECK 8

@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "history.h"
 #include "file_works.h"
 #include "string_works.h"
@@ -14,9 +14,9 @@ void CheckHistory(const char *url)
   int f;
   unsigned ul;
   char * history_file = getSymbolicPath("$urlcache\\history.txt");
-  if ((f = fopen(history_file, A_ReadOnly + A_Create + A_BIN, P_READ + P_WRITE, &ul)) == -1)
+  if ((f = _open(history_file, A_ReadOnly + A_Create + A_BIN, P_READ + P_WRITE, &ul)) == -1)
   {
-    if ((f = fopen(history_file, A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul)) == -1)
+    if ((f = _open(history_file, A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul)) == -1)
     {
       LockSched();
       ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
@@ -28,14 +28,14 @@ void CheckHistory(const char *url)
     default_url = (char *) malloc(strlen(url) + 3);
     strcpy(default_url, url); strcat(default_url, NEW_LINE);
     
-    fwrite(f,default_url,strlen(default_url), &ul);
-    fclose(f, &ul);
+    _write(f,default_url,strlen(default_url), &ul);
+    _close(f, &ul);
 
     mfree(default_url);
     mfree(history_file);
     return;
   }
-  fclose(f, &ul);
+  _close(f, &ul);
   mfree(history_file);
 }
 
@@ -48,7 +48,7 @@ char **GetHistory(int *cnt)
   int f,flen,history_depth=0,i;
   unsigned ul;
   char * history_file = getSymbolicPath("$urlcache\\history.txt");
-  f=fopen(history_file, A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  f=_open(history_file, A_ReadOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
@@ -58,14 +58,14 @@ char **GetHistory(int *cnt)
     mfree(history_file);
     return 0;
   }
-  flen=lseek(f,0,2,&ul,&ul)+1;
-  lseek(f,0,0,&ul,&ul);
+  flen=_lseek(f,0,2,&ul,&ul)+1;
+  _lseek(f,0,0,&ul,&ul);
 
   flen=(flen>MAX_FILE_SIZE)?MAX_FILE_SIZE:flen;
   history_buf=(char*)malloc(MAX_FILE_SIZE);
   history_buf[flen-1]=0;
-  fread(f,history_buf,flen,&ul);
-  fclose(f,&ul);
+  _read(f,history_buf,flen,&ul);
+  _close(f,&ul);
 
   history=(char**)malloc(sizeof(char *)*HISTORY_DEPTH);
   for(i=0;i<HISTORY_DEPTH;i++)
@@ -98,7 +98,7 @@ void AddURLToHistory(const char *url)
   int f, flen, history_depth = 0, i;
   unsigned ul;
   char * history_file = getSymbolicPath("$urlcache\\history.txt");
-  if ((f=fopen(history_file, A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul))==-1)
+  if ((f=_open(history_file, A_ReadWrite+A_Create+A_BIN,P_READ+P_WRITE,&ul))==-1)
   {
     LockSched();
     ShowMSG(1,(int)lgpData[LGP_HistoryFileFailed]);
@@ -107,15 +107,15 @@ void AddURLToHistory(const char *url)
     return;
   }
 
-  flen = lseek(f, 0, 2, &ul, &ul)+1;
-  lseek(f, 0, 0, &ul, &ul);
+  flen = _lseek(f, 0, 2, &ul, &ul)+1;
+  _lseek(f, 0, 0, &ul, &ul);
 
 
   flen = (flen>MAX_FILE_SIZE)?MAX_FILE_SIZE:flen;
   history_buf = (char*)malloc(MAX_FILE_SIZE);
   history_buf[flen-1] = 0;
-  fread(f,history_buf,flen,&ul);
-  fclose(f,&ul);
+  _read(f,history_buf,flen,&ul);
+  _close(f,&ul);
 
   history = (char**)malloc(sizeof(char *) * HISTORY_DEPTH);
   for(i = 0; i < HISTORY_DEPTH; i++)
@@ -172,9 +172,9 @@ void AddURLToHistory(const char *url)
   }
   mfree(history);
 
-  unlink(history_file, &ul);
+  _unlink(history_file, &ul);
 
-  f=fopen(history_file,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
+  f=_open(history_file,A_WriteOnly+A_Create+A_BIN,P_READ+P_WRITE,&ul);
   if (f==-1)
   {
     LockSched();
@@ -184,8 +184,8 @@ void AddURLToHistory(const char *url)
     mfree(history_file);
     return;
   }
-  fwrite(f,history_buf,strlen(history_buf), &ul);
-  fclose(f, &ul);
+  _write(f,history_buf,strlen(history_buf), &ul);
+  _close(f, &ul);
   mfree(history_buf);
   mfree(history_file);
 }

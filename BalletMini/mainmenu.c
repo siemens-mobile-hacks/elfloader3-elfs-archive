@@ -1,4 +1,4 @@
-#include "..\inc\swilib.h"
+#include <swilib.h>
 #include "rect_patcher.h"
 #include "view.h"
 #include "main.h"
@@ -148,7 +148,7 @@ static int edit_bookmark_onkey(GUI * gui, GUI_MSG * msg)
         goto SAME_FOLDER;
       }
       if(edit_mode == CreateFolder)
-        mkdir(name, &io_error);
+        _mkdir(name, &io_error);
       if(edit_mode == RenameFolder)
         fmove(bl->fullname, name, &io_error);
       mfree(name);
@@ -174,12 +174,12 @@ static int edit_bookmark_onkey(GUI * gui, GUI_MSG * msg)
         }
       }
       if(edit_mode == EditBookmark)
-        unlink(bl->fullname, &io_error);
-      int hFile = fopen(name, A_WriteOnly + A_Create + A_BIN, P_WRITE, &io_error);
+        _unlink(bl->fullname, &io_error);
+      int hFile = _open(name, A_WriteOnly + A_Create + A_BIN, P_WRITE, &io_error);
       //url = ToWeb(url, 0);
       char * tmp_url = URL_reencode_escapes(url);
-      fwrite(hFile, tmp_url, strlen(tmp_url), &io_error);
-      fclose(hFile,&io_error);
+      _write(hFile, tmp_url, strlen(tmp_url), &io_error);
+      _close(hFile,&io_error);
       mfree(name);
       mfree(url);
       mfree(tmp_url);
@@ -308,11 +308,11 @@ int show_edit_bookmark_menu(BList * bl, EditBookmarkMode mode)
       {
         if (fstat.size > 0)
         {
-          if ((hFile = fopen(bl->fullname, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
+          if ((hFile = _open(bl->fullname, A_ReadOnly + A_BIN, P_READ, &io_error)) != -1)
           {
             char * url = (char *)malloc(fstat.size + 1);
-            url[fread(hFile, url, fstat.size, &io_error)] = NULL;
-            fclose(hFile, &io_error);
+            url[_read(hFile, url, fstat.size, &io_error)] = 0;
+            _close(hFile, &io_error);
             URL_unescape(url);
             utf8_2ws(ws, url, strlen(url));
             mfree(url);
@@ -395,11 +395,11 @@ void bookmarks_options_delete(GUI *data)
   BList * bl = (BList *)MenuGetUserPointer(data);
   if(bl->type == IS_FOLDER)
   {
-    if(!rmdir(bl->fullname, &io_error))
+    if(!_rmdir(bl->fullname, &io_error))
       MsgBoxError(1, (int)lgpData[LGP_FolderNotEmpty]);
   }
   if(bl->type == IS_FILE)
-    unlink(bl->fullname, &io_error);
+    _unlink(bl->fullname, &io_error);
   GeneralFuncF1(2);
 }
 
@@ -600,7 +600,7 @@ int FindFiles(char * str)
       {
         i = strlen(de.file_name);
         strncpy(name, de.file_name, i);
-        name[i] = NULL;
+        name[i] = 0;
         char* pext = strrchr(name, '.');
         if (pext)
           *pext = 0;
@@ -761,7 +761,7 @@ SOFTKEYSTAB bookmarks_menu_skt=
   bookmarks_menu_sk,0
 };
 
-HEADER_DESC bookmarks_menu_header={0,0,0,0,NULL,NULL,LGP_NULL};
+HEADER_DESC bookmarks_menu_header={0,0,0,0,NULL,0,LGP_NULL};
 
 MENU_DESC bookmarks_menu_struct=
 {
@@ -886,11 +886,11 @@ int search_menu_onkey(GUI *data, GUI_MSG *msg)
     mfree(search_path);
     if (GetFileStats(url_file,&stat,&err)==-1) goto fail;
     if ((fsize=stat.size)<=0)  goto fail;
-    if ((f=fopen(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
+    if ((f=_open(url_file,A_ReadOnly+A_BIN,P_READ,&err))==-1) goto fail;    
     
     url=(char*)malloc(fsize+1);
-    url[fread(f,url,fsize,&err)]=0;    
-    fclose(f,&err);  
+    url[_read(f,url,fsize,&err)]=0;    
+    _close(f,&err);  
     s=url;
     while(*s>32) s++;
     *s=0;
@@ -1205,15 +1205,15 @@ int fcopy(char* src, char* dst) //From MC source code
           ShowMSG(1, (int)lgpData[LGP_FileExists]); 
         else
         {
-	  fi = fopen(src, A_ReadOnly + A_BIN, P_READ, &err);
+	  fi = _open(src, A_ReadOnly + A_BIN, P_READ, &err);
           if (fi != -1) 
           {
-                  fo = fopen(dst, A_ReadWrite+A_BIN+A_Create+A_Truncate, P_READ+P_WRITE, &err);
+                  fo = _open(dst, A_ReadWrite+A_BIN+A_Create+A_Truncate, P_READ+P_WRITE, &err);
                   if (fo != -1) 
                   {
   
-                          left = lseek(fi, 0, S_END, &err, &err);
-                          lseek(fi, 0, S_SET, &err, &err);
+                          left = _lseek(fi, 0, S_END, &err, &err);
+                          _lseek(fi, 0, S_SET, &err, &err);
                           if (left)
                           {
                                   buff = malloc(BUF_SIZE);
@@ -1224,8 +1224,8 @@ int fcopy(char* src, char* dst) //From MC source code
                                   cb = left < BUF_SIZE ? left : BUF_SIZE;
                                   left -= cb;
   
-                                  if (fread(fi, buff, cb, &err) != cb) goto L_EXIT;
-                                  if (fwrite(fo, buff, cb, &err) != cb) goto L_EXIT;
+                                  if (_read(fi, buff, cb, &err) != cb) goto L_EXIT;
+                                  if (_write(fo, buff, cb, &err) != cb) goto L_EXIT;
                           }
                           res = 1;
                   }
@@ -1236,8 +1236,8 @@ int fcopy(char* src, char* dst) //From MC source code
         }
 L_EXIT:
 	if (buff) mfree(buff);
-	if (fo != -1) fclose(fo, &err);
-	if (fi !=- 1) fclose(fi, &err);
+	if (fo != -1) _close(fo, &err);
+	if (fi !=- 1) _close(fi, &err);
 	return res;
 }
 
@@ -1467,8 +1467,8 @@ int CreateHistoryMenu()
 
 SOFTKEY_DESC input_url_sk[]=
 {
-  {0x0018,0x0000, NULL},
-  {0x0001,0x0000, NULL},
+  {0x0018,0x0000, 0},
+  {0x0001,0x0000, 0},
   {0x003D,0x0000, (int)LGP_DOIT_PIC}
 };
 
@@ -1478,7 +1478,7 @@ static const SOFTKEYSTAB input_url_skt=
 };
 
 
-HEADER_DESC input_url_header={0,0,0,0,NULL,NULL,LGP_NULL};
+HEADER_DESC input_url_header={0,0,0,0,NULL,0,LGP_NULL};
 
 static void input_url_ghook(GUI *data, int cmd)
 {
@@ -1730,14 +1730,14 @@ HEADER_DESC main_menu_header={0,0,0,0,NULL,(int)"Menu:",LGP_NULL};
 
 MENUITEM_DESC main_menu_items[MAIN_MENU_ITEMS_N]=
 {
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
-  {NULL, NULL, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //0
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //1
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //2
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}, //3
+  {NULL, 0, LGP_NULL, 0, NULL, MENU_FLAG3, MENU_FLAG2}  //4
 };
 
 static const MENUPROCS_DESC main_menu_procs[MAIN_MENU_ITEMS_N]=
@@ -1793,7 +1793,7 @@ static const MENU_DESC main_menu_struct=
 int CreateMainMenu(VIEWDATA *vd)
 {
   MAIN_CSM * main_csm;
-  int main_menu_id;
+  int main_menu_id = 0;
   if ((main_csm=(MAIN_CSM *)FindCSMbyID(maincsm_id)))
   {
     patch_header(&main_menu_header);

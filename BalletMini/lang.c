@@ -1,4 +1,4 @@
-#include "..\inc\swilib.h"
+#include <swilib.h>
 #include "lang.h"
 #include "file_works.h"
 
@@ -8,11 +8,11 @@ int lgpLoaded;
 void lgpInitLangPack(void)
 {
   int hFile;
-  unsigned int io_error = NULL;
+  unsigned int io_error = 0;
   char * lang_file = getSymbolicPath("$ballet\\lang.txt");
   
   for (int i = 0; i < LGP_DATA_NUM; i ++)
-    lgpData[i] = NULL;
+    lgpData[i] = 0;
   lgpLoaded = 0;
   
   char * buf;
@@ -20,17 +20,17 @@ void lgpInitLangPack(void)
   
   if (GetFileStats(lang_file, &fstat, &io_error) != -1)
   {
-    if((hFile = fopen(lang_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1)
+    if((hFile = _open(lang_file, A_ReadOnly + A_BIN, P_READ, &io_error))!=-1)
     {
       if (buf =(char *)malloc(fstat.size + 1))
       {
-        buf[fread(hFile, buf, fstat.size, &io_error)] = NULL;
-        fclose(hFile, &io_error);
+        buf[_read(hFile, buf, fstat.size, &io_error)] = 0;
+        _close(hFile, &io_error);
         
         char line[128];
-        int lineSize = NULL;
-        int lp_id = NULL;
-        int buf_pos = NULL;
+        int lineSize = 0;
+        int lp_id = 0;
+        int buf_pos = 0;
         while(buf[buf_pos] && buf_pos < fstat.size && lp_id < LGP_DATA_NUM)
         {
           if (buf[buf_pos]=='\n' || buf[buf_pos]=='\r')
@@ -39,9 +39,9 @@ void lgpInitLangPack(void)
             {
               lgpData[lp_id] = (char *)malloc(lineSize+1);
               memcpy(lgpData[lp_id], line, lineSize);
-              lgpData[lp_id][lineSize] = NULL;
+              lgpData[lp_id][lineSize] = 0;
               lp_id ++;
-              lineSize = NULL;
+              lineSize = 0;
             }
           }
           else
@@ -52,9 +52,9 @@ void lgpInitLangPack(void)
         {
           lgpData[lp_id] = (char *)malloc(lineSize+1);
           memcpy(lgpData[lp_id], line, lineSize);
-          lgpData[lp_id][lineSize] = NULL;
+          lgpData[lp_id][lineSize] = 0;
           lp_id ++;
-          lineSize = NULL;
+          lineSize = 0;
         }
         mfree(buf);
         lgpLoaded = 1;
@@ -77,7 +77,7 @@ void lgpInitLangPack(void)
         mfree(lang_file);
         return;
       }
-      fclose(hFile, &io_error);
+      _close(hFile, &io_error);
     }
   }
   mfree(lang_file);

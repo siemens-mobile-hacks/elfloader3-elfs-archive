@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "inet.h"
 #include "local_ipc.h"
 #include "string_works.h"
@@ -17,7 +17,7 @@ extern WSHDR *ws_console;
 extern volatile int TERMINATED;
 extern volatile int STOPPED;
 
-volatile static int is_gprs_online=1;
+static volatile int is_gprs_online=1;
 
 static int DNR_ID=0;
 static int DNR_TRIES=3;
@@ -158,8 +158,8 @@ static GBSTMR send_tmr;
 static void ClearSendQ(void)
 {
   mfree(sendq_p);
-  sendq_p=NULL;
-  sendq_l=NULL;
+  sendq_p=0;
+  sendq_l=0;
 #ifdef SEND_TIMER
   GBS_DelTimer(&send_tmr);
 #endif
@@ -168,8 +168,8 @@ static void ClearSendQ(void)
 static void ClearRecvQ(void)
 {
   mfree(recvq_p);
-  recvq_p=NULL;
-  recvq_l=NULL;
+  recvq_p=0;
+  recvq_l=0;
 }
 
 static void end_socket(void)
@@ -199,9 +199,9 @@ static void free_socket(void)
 }
 
 #ifdef SEND_TIMER
+static void bsend(int len, void *p);
 static void resend(void)
 {
-  void bsend(int len, void *p);
   SUBPROC((void*)bsend,0,0);
 }
 #endif
@@ -282,11 +282,11 @@ static void writecache(void *buf, int len)
   unsigned int ul;
   int f;
   if (!FNCACHE) return;
-  f=fopen(FNCACHE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
+  f=_open(FNCACHE,A_ReadWrite+A_Create+A_Append+A_BIN,P_READ+P_WRITE,&ul);
   if (f!=-1)
   {
-    fwrite(f,buf,len,&ul);
-    fclose(f,&ul);
+    _write(f,buf,len,&ul);
+    _close(f,&ul);
   }
 }
 
@@ -626,7 +626,7 @@ void StartINET(const char *url, char *fncache)
   URL=globalstr(url);
   if ((FNCACHE=fncache))
   {
-    unlink(fncache,&err);
+    _unlink(fncache,&err);
   }
   SUBPROC((void*)create_connect);
 }

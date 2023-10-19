@@ -1,55 +1,56 @@
-#include "..\inc\swilib.h"
-#include "..\inc\cfg_items.h"
+#include <swilib.h>
+#include <cfg_items.h>
 #include "conf_loader.h"
 
-const char *successed_config_filename="";
+const char *successed_config_filename = "";
 
-#pragma segment="CONFIG_C"
-int LoadConfigData(const char *fname)
-{
-  int f;
-  unsigned int ul;
-  char *buf;
-  int result=0;
-  void *cfg;
-  unsigned int rlen, end;
-
-  cfg=(char *)__segment_begin("CONFIG_C");
-
-  unsigned int len=(char *)__segment_end("CONFIG_C")-(char *)__segment_begin("CONFIG_C");
-
-  if (!(buf=malloc(len))) return -1;
-  if ((f=fopen(fname,A_ReadOnly+A_BIN,P_READ,&ul))!=-1)
-  {
-    rlen=fread(f,buf,len,&ul);
-    end=lseek(f,0,S_END,&ul,&ul);
-    fclose(f,&ul);
-    if (rlen!=end || rlen!=len)  goto L_SAVENEWCFG;
-    memcpy(cfg,buf,len);
-  }
-  else
-  {
-  L_SAVENEWCFG:
-    if ((f=fopen(fname,A_ReadWrite+A_Create+A_Truncate,P_READ+P_WRITE,&ul))!=-1)
-    {
-      if (fwrite(f,cfg,len,&ul)!=len) result=-1;
-      fclose(f,&ul);
-    }
-    else
-      result=-1;
-  }
-  mfree(buf);
-  if (result>=0) successed_config_filename=fname;
-  return(result);
+//__attribute__((section("CONFIG_C")))
+static int LoadConfigData(const char *fname, CFG_HDR *cfghdr0, int * __config_begin, int * __config_end) {
+	int f;
+	unsigned int ul;
+	char *buf;
+	int result = 0;
+	void *cfg;
+	
+	// extern const int __config_end, __config_begin;
+	cfg = (void *) cfghdr0;
+	volatile unsigned int _segb = (volatile unsigned int) __config_begin;
+	volatile unsigned int _sege = (volatile unsigned int) __config_end;
+	
+	unsigned int len = (_sege - _segb) - 4;
+	if (!(buf = malloc(len)))
+		return -1;
+	
+	if ((f = _open(fname, A_ReadOnly + A_BIN, 0, &ul)) != -1) {
+		if (_read(f,buf,len,&ul) == (int) len) {
+			memcpy(cfg,buf,len);
+			_close(f,&ul);
+		} else {
+			_close(f,&ul);
+			goto L_SAVENEWCFG;
+		}
+	} else {
+L_SAVENEWCFG:
+		if ((f = _open(fname, A_ReadWrite + A_Create + A_Truncate, P_READ + P_WRITE, &ul)) != -1) {
+			if (_write(f, cfg, len, &ul) != (int) len)
+				result = -1;
+			_close(f,&ul);
+		} else {
+			result =- 1;
+		}
+	}
+	
+	mfree(buf);
+	
+	if (result >= 0)
+		successed_config_filename = (char *) fname;
+	
+	return (result);
 }
 
-void InitConfig()
-{
-  if (LoadConfigData("4:\\ZBin\\etc\\BalletMini.bcfg")<0)
-  {
-    LoadConfigData("0:\\ZBin\\etc\\BalletMini.bcfg");
-  }
+void InitConfig() {
+	__CONFIG_EXTERN(0, cfghdr0);
+	if (LoadConfigData("4:\\ZBin\\etc\\BalletMini.bcfg", __CONFIG(0, cfghdr0)) < 0) {
+		LoadConfigData("0:\\ZBin\\etc\\BalletMini.bcfg", __CONFIG(0, cfghdr0));
+	}
 }
-
-
-

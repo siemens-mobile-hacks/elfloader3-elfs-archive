@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "string_works.h"
 #include "file_works.h"
 
@@ -6,8 +6,8 @@ extern char BALLET_PATH[256];
 
 char * getSymbolicPath(const char * cFileName)
 {
-  int ps = NULL;
-  int pp = NULL;
+  int ps = 0;
+  int pp = 0;
   char * path = (char *)malloc(strlen(BALLET_PATH) + strlen(cFileName) + 32);
   while (ps<strlen(cFileName))
   {
@@ -146,7 +146,7 @@ int make_dirs(const char * path)
     s++;
     c = *s;
     *s = 0;
-    i += mkdir(tmp, &io_error);
+    i += _mkdir(tmp, &io_error);
     *s = c;
   }
   return (i);

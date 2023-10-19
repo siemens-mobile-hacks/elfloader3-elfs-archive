@@ -1,4 +1,4 @@
-#include "../inc/swilib.h"
+#include <swilib.h>
 #include "view.h"
 #include "string_works.h"
 #include "destructors.h"
