@@ -84,7 +84,7 @@ enum LGP_ID
   LGP_Clear,
   LGP_AddToTemplate,
   
-  LGP_LangCode, // Пусть всегда будет в конце
+  LGP_LangCode, // РџСѓСЃС‚СЊ РІСЃРµРіРґР° Р±СѓРґРµС‚ РІ РєРѕРЅС†Рµ
   
   LGP_DATA_NUM
 };

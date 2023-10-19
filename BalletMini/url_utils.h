@@ -104,9 +104,9 @@ enum {
 #define T  nv|sp|bl|cn	/* tab */
 #define S  nv|sp|bl|pr	/* space */
 
-/* Преобразует URL в веб формат */
+/* РџСЂРµРѕР±СЂР°Р·СѓРµС‚ URL РІ РІРµР± С„РѕСЂРјР°С‚ */
 char * URL_reencode_escapes(const char * url);
-/* Преобразует URL из веб формата */
+/* РџСЂРµРѕР±СЂР°Р·СѓРµС‚ URL РёР· РІРµР± С„РѕСЂРјР°С‚Р° */
 void URL_unescape(char *s);
 
 #endif

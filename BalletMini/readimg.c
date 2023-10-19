@@ -43,7 +43,7 @@ IMGHDR *read_pngimg(const char *buf)
   pp.img=NULL;
   pp.img_h=NULL;  
   
-  if  (!png_check_sig((png_bytep)pp.p,PNG_BYTES_TO_CHECK)) return 0; // не пнг
+  if  (!png_check_sig((png_bytep)pp.p,PNG_BYTES_TO_CHECK)) return 0; // РЅРµ РїРЅРі
   pp.p+=PNG_BYTES_TO_CHECK;
   
   png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);

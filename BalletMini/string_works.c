@@ -213,13 +213,13 @@ void utf82win(char*d,const char *s)
       if (lb != 0x81)
         {*d = lb + 48; d++;}
       else
-        {*d = 'Ё'; d++;}
+        {*d = 'РЃ'; d++;}
 
     if (ub == 0xD1)
       if (lb != 0x91)
         {*d = lb + 112; d++;}
       else
-        {*d = 'ё'; d++;}
+        {*d = 'С‘'; d++;}
 
     if (ub == 0xE2)
       if (lb == 0x80)
@@ -249,8 +249,8 @@ int sfind8(char s,char *v)
   return -1;
 }
 
-int char_win2utf8(char*d,const char *s, char* symbols_array) // функция возвращает количество 
-{                                       // добавленных символов в d
+int char_win2utf8(char*d,const char *s, char* symbols_array) // С„СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ 
+{                                       // РґРѕР±Р°РІР»РµРЅРЅС‹С… СЃРёРјРІРѕР»РѕРІ РІ d
   char hex[] = "0123456789abcdef";
   char *d0 = "%d0%";
   char *d1 = "%d1%";
@@ -263,14 +263,14 @@ int char_win2utf8(char*d,const char *s, char* symbols_array) // функция возвраща
     *d = hex[b     &0xF]; d++;
     r = 3;
   }
-  if(b >= 0xC0 && b <= 0xFF)           //если это русская буква в коде win1251
+  if(b >= 0xC0 && b <= 0xFF)           //РµСЃР»Рё СЌС‚Рѕ СЂСѓСЃСЃРєР°СЏ Р±СѓРєРІР° РІ РєРѕРґРµ win1251
   {
-    ab = 0x350;                        //считаем её unicode-номер
+    ab = 0x350;                        //СЃС‡РёС‚Р°РµРј РµС‘ unicode-РЅРѕРјРµСЂ
     ab += b;
-    ub = 0xC0 | ((ab>>6) & 0x1F);      //вычисляем бытовые компоненты для utf8
+    ub = 0xC0 | ((ab>>6) & 0x1F);      //РІС‹С‡РёСЃР»СЏРµРј Р±С‹С‚РѕРІС‹Рµ РєРѕРјРїРѕРЅРµРЅС‚С‹ РґР»СЏ utf8
     lb = 0x80 | (ab & 0x3F);
     *d = '%'; d++;
-    *d = hex[(ub>>4)&0xF]; d++;        //и кладём в буфер результата
+    *d = hex[(ub>>4)&0xF]; d++;        //Рё РєР»Р°РґС‘Рј РІ Р±СѓС„РµСЂ СЂРµР·СѓР»СЊС‚Р°С‚Р°
     *d = hex[ub     &0xF]; d++;
     *d = '%'; d++;
     *d = hex[(lb>>4)&0xF]; d++;
@@ -280,7 +280,7 @@ int char_win2utf8(char*d,const char *s, char* symbols_array) // функция возвраща
   else
       if(b == 0xA8)
       {
-        memcpy(d, d0, 4);              //пара особых случаев для буквы "ё"
+        memcpy(d, d0, 4);              //РїР°СЂР° РѕСЃРѕР±С‹С… СЃР»СѓС‡Р°РµРІ РґР»СЏ Р±СѓРєРІС‹ "С‘"
         d+=4;
         *d = '8'; d++;
         *d = '1'; d++;
@@ -298,7 +298,7 @@ int char_win2utf8(char*d,const char *s, char* symbols_array) // функция возвраща
   return r;
 }
 
-char * ToWeb(char *src, int special, int conv_percent)                   //конвертируем ссылку в utf8
+char * ToWeb(char *src, int special, int conv_percent)                   //РєРѕРЅРІРµСЂС‚РёСЂСѓРµРј СЃСЃС‹Р»РєСѓ РІ utf8
 {
   int cnt = 0, i, j;
   char* symbols_array;
@@ -307,24 +307,24 @@ char * ToWeb(char *src, int special, int conv_percent)                   //конве
   else
     symbols_array = symbols;
   char *ret;
-  for(i = 0; src[i]; i++)                 //считаем русские символы
+  for(i = 0; src[i]; i++)                 //СЃС‡РёС‚Р°РµРј СЂСѓСЃСЃРєРёРµ СЃРёРјРІРѕР»С‹
   {
     unsigned char c=src[i];
     if(c>=0x80) cnt+=2;
     else
       if(special&&(sfind8(c,symbols_array)>=0)) cnt++;
   }
-  ret = malloc(strlen(src) + cnt*3 + 1);  //выделяем память под utf8-строку
+  ret = malloc(strlen(src) + cnt*3 + 1);  //РІС‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РїРѕРґ utf8-СЃС‚СЂРѕРєСѓ
   for(i = 0, j = 0; src[i]; i++)
   {
     unsigned char c=src[i];
     if(c>=0x80||(special&&(sfind8(c,symbols_array)>=0)))
-      j += char_win2utf8(ret+j, src+i, symbols_array);   //получаем вместо русского символа utf8-замену
+      j += char_win2utf8(ret+j, src+i, symbols_array);   //РїРѕР»СѓС‡Р°РµРј РІРјРµСЃС‚Рѕ СЂСѓСЃСЃРєРѕРіРѕ СЃРёРјРІРѕР»Р° utf8-Р·Р°РјРµРЅСѓ
     else
       ret[j++] = src[i];
   }
   ret[j] = 0;
-  mfree(src);                             //освобождаем память от исходной строки
+  mfree(src);                             //РѕСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ РѕС‚ РёСЃС…РѕРґРЅРѕР№ СЃС‚СЂРѕРєРё
   return ret;
 }
 

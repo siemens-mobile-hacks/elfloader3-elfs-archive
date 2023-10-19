@@ -139,7 +139,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       p->pos++;
       continue;
     }
-    // компоновка элементов здесь
+    // РєРѕРјРїРѕРЅРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ Р·РґРµСЃСЊ
     cw=GetSymbolBitmapWidth(vd,c,p->bold?FONT_SMALL_BOLD:FONT_SMALL);
     left-=cw;
     if (left<0)
@@ -194,7 +194,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
       return 1; // here can be a bug with line height
     }
     
-    /*if (cw>=(scrW/2)||h>(GetFontHeight(FONT_SMALL,0)*2)) // Картинки отдельно
+    /*if (cw>=(scrW/2)||h>(GetFontHeight(FONT_SMALL,0)*2)) // РљР°СЂС‚РёРЅРєРё РѕС‚РґРµР»СЊРЅРѕ
     {
       if ((left+cw)<scrW) // image is last character
       {
@@ -212,7 +212,7 @@ unsigned int SearchNextDisplayLine(VIEWDATA *vd, LINECACHE *p/*, unsigned int *m
     }*/
     if (h>p->pixheight) p->pixheight=h;
       
-    if ((cw>=scrW/2)&&h>(GetFontHeight(FONT_SMALL,0)*3)) // Картинки отдельно
+    if ((cw>=scrW/2)&&h>(GetFontHeight(FONT_SMALL,0)*3)) // РљР°СЂС‚РёРЅРєРё РѕС‚РґРµР»СЊРЅРѕ
     {
       if ((left+cw)==scrW) // image is first character
       {
@@ -241,7 +241,7 @@ static void newCacheLine(VIEWDATA *vd, LINECACHE *p)
 {
   if ((vd->lines_cache_size%LINESCACHECHUNK)==0)
   {
-    //Дошли до конца куска, реаллоцируем еще кусок
+    //Р”РѕС€Р»Рё РґРѕ РєРѕРЅС†Р° РєСѓСЃРєР°, СЂРµР°Р»Р»РѕС†РёСЂСѓРµРј РµС‰Рµ РєСѓСЃРѕРє
     vd->lines_cache=realloc(vd->lines_cache,(vd->lines_cache_size+LINESCACHECHUNK)*sizeof(LINECACHE));
   }
   memcpy(vd->lines_cache+(vd->lines_cache_size++),p,sizeof(LINECACHE));
@@ -416,8 +416,8 @@ void renderForm(VIEWDATA *vd, REFCACHE *rf, int x, int y, int y2, int wchar, int
       GetPaletteAdrByColorIndex(23));
   }
 }
-// возвращает 1, если видна последняя строка
-// возвращает 2, если виден конец страницы
+// РІРѕР·РІСЂР°С‰Р°РµС‚ 1, РµСЃР»Рё РІРёРґРЅР° РїРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂРѕРєР°
+// РІРѕР·РІСЂР°С‰Р°РµС‚ 2, РµСЃР»Рё РІРёРґРµРЅ РєРѕРЅРµС† СЃС‚СЂР°РЅРёС†С‹
 int RenderPage(VIEWDATA *vd, int do_draw)
 {
   int scr_w=ScreenW()-MARGIN/2;
@@ -580,7 +580,7 @@ int RenderPage(VIEWDATA *vd, int do_draw)
             rc[cur_rc].color[1]=vd->rawtext[sc+1];
             rc[cur_rc].color[2]=vd->rawtext[sc+2]>>8;
             rc[cur_rc].color[3]=vd->rawtext[sc+2];
-            if (memcmp((void *)rc[cur_rc].color,(void *)prev->color,4))  // Только если цвет не равен предыдущему (очередь объектов не резиновая ;))
+            if (memcmp((void *)rc[cur_rc].color,(void *)prev->color,4))  // РўРѕР»СЊРєРѕ РµСЃР»Рё С†РІРµС‚ РЅРµ СЂР°РІРµРЅ РїСЂРµРґС‹РґСѓС‰РµРјСѓ (РѕС‡РµСЂРµРґСЊ РѕР±СЉРµРєС‚РѕРІ РЅРµ СЂРµР·РёРЅРѕРІР°СЏ ;))
             {
               if (ws_width)
                 prev->end_x=ws_width-1+MARGIN/2;
@@ -896,7 +896,7 @@ REFCACHE *FindReference(VIEWDATA *vd, unsigned int pos)
   return NULL;
 }
 
-int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // Находит index'ы всех ref'ов с заданным id
+int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // РќР°С…РѕРґРёС‚ index'С‹ РІСЃРµС… ref'РѕРІ СЃ Р·Р°РґР°РЅРЅС‹Рј id
 {
   unsigned int sz=*(vd->oms+id);
   sz<<=8;
@@ -915,8 +915,8 @@ int FindReferenceById(VIEWDATA *vd, unsigned int id, int i) // Находит index'ы в
 //GUI *paste_gui;
 
 //Templates
-char * templates_chars; //Собственно файл
-char ** templates_lines; //Массив указателей на строки
+char * templates_chars; //РЎРѕР±СЃС‚РІРµРЅРЅРѕ С„Р°Р№Р»
+char ** templates_lines; //РњР°СЃСЃРёРІ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° СЃС‚СЂРѕРєРё
 
 void FreeTemplates(void)
 {
@@ -1050,7 +1050,7 @@ SOFTKEYSTAB templates_menu_skt=
   templates_menu_sk,0
 };
 
-HEADER_DESC templates_menu_header={0,0,0,0,NULL,(int)"Выбор",LGP_NULL};
+HEADER_DESC templates_menu_header={0,0,0,0,NULL,(int)"Р’С‹Р±РѕСЂ",LGP_NULL};
 
 MENU_DESC templates_menu_struct=
 {
@@ -1225,16 +1225,16 @@ static const INPUTDIA_DESC input_box_desc =
   100,
   101,
   0,
-  //  0x00000001 - Выровнять по правому краю
-  //  0x00000002 - Выровнять по центру
-  //  0x00000004 - Инверсия знакомест
+  //  0x00000001 - Р’С‹СЂРѕРІРЅСЏС‚СЊ РїРѕ РїСЂР°РІРѕРјСѓ РєСЂР°СЋ
+  //  0x00000002 - Р’С‹СЂРѕРІРЅСЏС‚СЊ РїРѕ С†РµРЅС‚СЂСѓ
+  //  0x00000004 - РРЅРІРµСЂСЃРёСЏ Р·РЅР°РєРѕРјРµСЃС‚
   //  0x00000008 - UnderLine
-  //  0x00000020 - Не переносить слова
+  //  0x00000020 - РќРµ РїРµСЂРµРЅРѕСЃРёС‚СЊ СЃР»РѕРІР°
   //  0x00000200 - bold
   0,
   //  0x00000002 - ReadOnly
-  //  0x00000004 - Не двигается курсор
-  //  0x40000000 - Поменять местами софт-кнопки
+  //  0x00000004 - РќРµ РґРІРёРіР°РµС‚СЃСЏ РєСѓСЂСЃРѕСЂ
+  //  0x40000000 - РџРѕРјРµРЅСЏС‚СЊ РјРµСЃС‚Р°РјРё СЃРѕС„С‚-РєРЅРѕРїРєРё
   0x40000000
 };
 
@@ -1452,7 +1452,7 @@ void sel_menu_iconhndl(void *gui, int cur_item, void *user_pointer)
   else
   {
     ws=AllocMenuWS(gui,10);
-    ascii2ws(ws,lgpData[LGP_Error]);//"Ошибка");
+    ascii2ws(ws,lgpData[LGP_Error]);//"РћС€РёР±РєР°");
   }
   SetMenuItemText(gui, item, ws, cur_item);
 }
@@ -1623,16 +1623,16 @@ static const INPUTDIA_DESC link_box_desc =
   100,
   101,
   0,
-  //  0x00000001 - Выровнять по правому краю
-  //  0x00000002 - Выровнять по центру
-  //  0x00000004 - Инверсия знакомест
+  //  0x00000001 - Р’С‹СЂРѕРІРЅСЏС‚СЊ РїРѕ РїСЂР°РІРѕРјСѓ РєСЂР°СЋ
+  //  0x00000002 - Р’С‹СЂРѕРІРЅСЏС‚СЊ РїРѕ С†РµРЅС‚СЂСѓ
+  //  0x00000004 - РРЅРІРµСЂСЃРёСЏ Р·РЅР°РєРѕРјРµСЃС‚
   //  0x00000008 - UnderLine
-  //  0x00000020 - Не переносить слова
+  //  0x00000020 - РќРµ РїРµСЂРµРЅРѕСЃРёС‚СЊ СЃР»РѕРІР°
   //  0x00000200 - bold
   0,
   //  0x00000002 - ReadOnly
-  //  0x00000004 - Не двигается курсор
-  //  0x40000000 - Поменять местами софт-кнопки
+  //  0x00000004 - РќРµ РґРІРёРіР°РµС‚СЃСЏ РєСѓСЂСЃРѕСЂ
+  //  0x40000000 - РџРѕРјРµРЅСЏС‚СЊ РјРµСЃС‚Р°РјРё СЃРѕС„С‚-РєРЅРѕРїРєРё
   0x40000000
 };
 

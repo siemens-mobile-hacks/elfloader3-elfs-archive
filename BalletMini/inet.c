@@ -26,8 +26,8 @@ int connect_state=0;
 
 static int sock=-1;
 
-static int sendq_l=0; //Длинна очереди для send
-static char *sendq_p=NULL; //указатель очереди
+static int sendq_l=0; //Р”Р»РёРЅРЅР° РѕС‡РµСЂРµРґРё РґР»СЏ send
+static char *sendq_p=NULL; //СѓРєР°Р·Р°С‚РµР»СЊ РѕС‡РµСЂРµРґРё
 
 static int recvq_l=0;
 static char *recvq_p=NULL;
@@ -55,7 +55,7 @@ static void create_connect(void)
   int err;
 
   SOCK_ADDR sa;
-  //Устанавливаем соединение
+  //РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ
   connect_state = 0;
   receive_mode=0;
   if (!IsGPRSEnabled())
@@ -91,7 +91,7 @@ static void create_connect(void)
         ascii2ws(ws_console,lgpData[LGP_WaitDNR]);
         UnlockSched();
         SmartREDRAW();
-        return; //Ждем готовности DNR
+        return; //Р–РґРµРј РіРѕС‚РѕРІРЅРѕСЃС‚Рё DNR
             }
           }
           else
@@ -140,7 +140,7 @@ static void create_connect(void)
       }
       else
       {
-        //Не осилили создания сокета, закрываем GPRS-сессию
+        //РќРµ РѕСЃРёР»РёР»Рё СЃРѕР·РґР°РЅРёСЏ СЃРѕРєРµС‚Р°, Р·Р°РєСЂС‹РІР°РµРј GPRS-СЃРµСЃСЃРёСЋ
         GPRS_OnOff(0,1);
       }
     }	
@@ -206,7 +206,7 @@ static void resend(void)
 }
 #endif
 
-//Буферизированая посылка в сокет, c последующим освобождением указателя
+//Р‘СѓС„РµСЂРёР·РёСЂРѕРІР°РЅР°СЏ РїРѕСЃС‹Р»РєР° РІ СЃРѕРєРµС‚, c РїРѕСЃР»РµРґСѓСЋС‰РёРј РѕСЃРІРѕР±РѕР¶РґРµРЅРёРµРј СѓРєР°Р·Р°С‚РµР»СЏ
 static void bsend(int len, void *p)
 {
   int i;
@@ -219,10 +219,10 @@ static void bsend(int len, void *p)
   }
   if (p)
   {
-    //Проверяем, не надо ли добавить в очередь
+    //РџСЂРѕРІРµСЂСЏРµРј, РЅРµ РЅР°РґРѕ Р»Рё РґРѕР±Р°РІРёС‚СЊ РІ РѕС‡РµСЂРµРґСЊ
     if (sendq_p)
     {
-      //Есть очередь, добавляем в нее
+      //Р•СЃС‚СЊ РѕС‡РµСЂРµРґСЊ, РґРѕР±Р°РІР»СЏРµРј РІ РЅРµРµ
       memcpy((sendq_p=realloc(sendq_p,sendq_l+len))+sendq_l,p,len);
       mfree(p);
       sendq_l+=len;
@@ -231,7 +231,7 @@ static void bsend(int len, void *p)
     sendq_p=p;
     sendq_l=len;
   }
-  //Отправляем уже существующее в очереди
+  //РћС‚РїСЂР°РІР»СЏРµРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРµ РІ РѕС‡РµСЂРµРґРё
   while((i=sendq_l)!=0)
   {
     if (i>0x400) i=0x400;
@@ -241,11 +241,11 @@ static void bsend(int len, void *p)
       j=*socklasterr();
       if ((j==0xC9)||(j==0xD6))
       {
-	      return; //Видимо, надо ждать сообщения ENIP_BUFFER_FREE
+	      return; //Р’РёРґРёРјРѕ, РЅР°РґРѕ Р¶РґР°С‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ ENIP_BUFFER_FREE
       }
       else
       {
-        //Ошибка
+        //РћС€РёР±РєР°
         //	LockSched();
         //	ShowMSG(1,(int)"BM: Send error!");
         //	UnlockSched();
@@ -253,7 +253,7 @@ static void bsend(int len, void *p)
         return;
       }
     }
-    memmove(sendq_p,sendq_p+j,sendq_l-=j); //Удалили переданное
+    memmove(sendq_p,sendq_p+j,sendq_l-=j); //РЈРґР°Р»РёР»Рё РїРµСЂРµРґР°РЅРЅРѕРµ
     LockSched();
     if (sendq_l)
     {
@@ -266,11 +266,11 @@ static void bsend(int len, void *p)
     SmartREDRAW();
     if (j<i)
     {
-      //Передали меньше чем заказывали
+      //РџРµСЂРµРґР°Р»Рё РјРµРЅСЊС€Рµ С‡РµРј Р·Р°РєР°Р·С‹РІР°Р»Рё
 #ifdef SEND_TIMER
       GBS_StartTimerProc(&send_tmr,TMR_SECOND(5),resend);
 #endif
-      return; //Ждем сообщения ENIP_BUFFER_FREE1
+      return; //Р–РґРµРј СЃРѕРѕР±С‰РµРЅРёСЏ ENIP_BUFFER_FREE1
     }
   }
   mfree(sendq_p);
@@ -320,16 +320,16 @@ static void get_answer(void)
     recvq_l+=i;
     recvq_p[recvq_l]=0;
     if (!(end_answer=strstr(recvq_p,"\r\n\r\n"))) return;
-    receive_mode=1; //Остальное транслируем напрямую
+    receive_mode=1; //РћСЃС‚Р°Р»СЊРЅРѕРµ С‚СЂР°РЅСЃР»РёСЂСѓРµРј РЅР°РїСЂСЏРјСѓСЋ
     end_answer+=2;
     *end_answer=0;
     LockSched();
     wsprintf(ws_console,recvq_p);
     UnlockSched();
     SmartREDRAW();
-    end_answer+=2; //Теперь end_answer указывает на тело ответа, которое надо передавать в обработчик
+    end_answer+=2; //РўРµРїРµСЂСЊ end_answer СѓРєР°Р·С‹РІР°РµС‚ РЅР° С‚РµР»Рѕ РѕС‚РІРµС‚Р°, РєРѕС‚РѕСЂРѕРµ РЅР°РґРѕ РїРµСЂРµРґР°РІР°С‚СЊ РІ РѕР±СЂР°Р±РѕС‚С‡РёРє
     i=recvq_l-(end_answer-recvq_p);
-    if (!i) return; //Нет данных, нечего посылать
+    if (!i) return; //РќРµС‚ РґР°РЅРЅС‹С…, РЅРµС‡РµРіРѕ РїРѕСЃС‹Р»Р°С‚СЊ
     writecache(end_answer,i);
     LockSched();
     if ((!TERMINATED)&&(!STOPPED))
@@ -534,7 +534,7 @@ int ParseSocketMsg(GBS_MSG *msg)
     }
     if ((int)msg->data1==sock)
     {
-      //Если наш сокет
+      //Р•СЃР»Рё РЅР°С€ СЃРѕРєРµС‚
       switch((int)msg->data0)
       {
       case ENIP_SOCK_CONNECTED:
@@ -543,7 +543,7 @@ int ParseSocketMsg(GBS_MSG *msg)
         if (connect_state==1)
         {
           connect_state=2;
-          //Соединение установленно, посылаем пакет
+          //РЎРѕРµРґРёРЅРµРЅРёРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅРѕ, РїРѕСЃС‹Р»Р°РµРј РїР°РєРµС‚
           SUBPROC((void*)SendPost);
         }
         break;
@@ -558,11 +558,11 @@ int ParseSocketMsg(GBS_MSG *msg)
         break;
       case ENIP_BUFFER_FREE:
       case ENIP_BUFFER_FREE1:
-        //Досылаем очередь
+        //Р”РѕСЃС‹Р»Р°РµРј РѕС‡РµСЂРµРґСЊ
         SUBPROC((void *)bsend,0,0);
         break;
       case ENIP_SOCK_REMOTE_CLOSED:
-        //Закрыт со стороны сервера
+        //Р—Р°РєСЂС‹С‚ СЃРѕ СЃС‚РѕСЂРѕРЅС‹ СЃРµСЂРІРµСЂР°
         ascii2ws(ws_console,lgpData[LGP_RemoteClosed]);
         SmartREDRAW();
         goto ENIP_SOCK_CLOSED_ALL;

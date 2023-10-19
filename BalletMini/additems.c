@@ -18,7 +18,7 @@
 {
   if ((vd->rawtext_size%RAWTEXTCHUNK)==0)
   {
-    //Дошли до конца куска, реаллоцируем еще кусок
+    //Р”РѕС€Р»Рё РґРѕ РєРѕРЅС†Р° РєСѓСЃРєР°, СЂРµР°Р»Р»РѕС†РёСЂСѓРµРј РµС‰Рµ РєСѓСЃРѕРє
     vd->rawtext=realloc(vd->rawtext,(vd->rawtext_size+RAWTEXTCHUNK)*2);
   }
   //
@@ -138,8 +138,8 @@ void AddPictureItemIndex(VIEWDATA *vd, int index)
 }
 
 
-//is_index >= 0 использовать последний
-//is_index <0 - задать  принудительно
+//is_index >= 0 РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РїРѕСЃР»РµРґРЅРёР№
+//is_index <0 - Р·Р°РґР°С‚СЊ  РїСЂРёРЅСѓРґРёС‚РµР»СЊРЅРѕ
 OMS_DYNPNGLIST *AddToDPngQueue(VIEWDATA *vd, IMGHDR *img, int is_index)
 {
   if (img->w > ScreenW()-MARGIN)

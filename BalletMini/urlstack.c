@@ -169,14 +169,14 @@ char *PushPageToStack(void)
   
   if (stack_top==PageSTACK_SIZE)
   {
-    //Убиваем лишнее
+    //РЈР±РёРІР°РµРј Р»РёС€РЅРµРµ
     killpage(0);
     memmove(PageSTACK,PageSTACK+1,(PageSTACK_SIZE-1)*sizeof(tPageStack));
     stack_top--;
     zeromem(PageSTACK+stack_top, sizeof(tPageStack));
   }
   i=stack_top;
-  //Убираем возможность пойти вперед ;)
+  //РЈР±РёСЂР°РµРј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РїРѕР№С‚Рё РІРїРµСЂРµРґ ;)
   while(i!=PageSTACK_SIZE)
   {
     if (PageSTACK[i].id!=0)

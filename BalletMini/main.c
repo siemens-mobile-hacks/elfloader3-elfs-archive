@@ -432,15 +432,15 @@ static void method0(VIEW_GUI *data)
         switch(connect_state)
         {
         case 1: case 2: case 3:
-//          wsprintf(data->ws1,percent_t,"Соединение...");
+//          wsprintf(data->ws1,percent_t,"РЎРѕРµРґРёРЅРµРЅРёРµ...");
 //          break;
 //        case 2:
-//          wsprintf(data->ws1,percent_t,"Обработка...");
+//          wsprintf(data->ws1,percent_t,"РћР±СЂР°Р±РѕС‚РєР°...");
           wstrcpy(data->ws1, ws_console);
           //wsprintf(data->ws1,percent_t,);
           break;
 //        case 3:
-//          wsprintf(data->ws1,percent_t,"Загрузка...");
+//          wsprintf(data->ws1,percent_t,"Р—Р°РіСЂСѓР·РєР°...");
 //          break;
         }
       }
@@ -479,7 +479,7 @@ static void method1(VIEW_GUI *data,void *(*malloc_adr)(int))
   VIEWDATA *vd=malloc(sizeof(VIEWDATA));
   zeromem(vd,sizeof(VIEWDATA));
   vd->ws=AllocWS(256);
-  vd->pos_cur_ref=0xFFFFFFFF; //Еще вообще не найдена ссылка
+  vd->pos_cur_ref=0xFFFFFFFF; //Р•С‰Рµ РІРѕРѕР±С‰Рµ РЅРµ РЅР°Р№РґРµРЅР° СЃСЃС‹Р»РєР°
   *((unsigned short *)(&vd->current_tag_d))=0xFFFF;
   vd->found_word_pos = -1;
   data->vd=vd;
@@ -549,7 +549,7 @@ void RunOtherByURL(const char *url, int other)
   if (other == 3) //sieget
   {
     if (sieget_ipc.data) mfree(sieget_ipc.data);
-    sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
+    sieget_ipc.name_to = sieget_ipc_name; // РџРѕСЃС‹Р»РєР° url РІ SieGet
     sieget_ipc.name_from = ipc_my_name;
     int len = strlen(url)+1;
     if (len%32 == 0) len+=1;
@@ -686,8 +686,8 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
         case 'L':
           if (rf->id!=_NOREF)
           {
-            // 1/http:        не бывает здесь такого
-            // 0/http:        не загружать
+            // 1/http:        РЅРµ Р±С‹РІР°РµС‚ Р·РґРµСЃСЊ С‚Р°РєРѕРіРѕ
+            // 0/http:        РЅРµ Р·Р°РіСЂСѓР¶Р°С‚СЊ
             _safe_free(goto_url);
             goto_url=extract_omstr(vd,rf->id);
             
@@ -961,7 +961,7 @@ static int method5(VIEW_GUI *data,GUI_MSG *msg)
               if (rf->tag == 'Z') s += strlen(s) + 1;
               
               if (sieget_ipc.data) mfree(sieget_ipc.data);
-              sieget_ipc.name_to = sieget_ipc_name; // Посылка url в SieGet
+              sieget_ipc.name_to = sieget_ipc_name; // РџРѕСЃС‹Р»РєР° url РІ SieGet
               sieget_ipc.name_from = ipc_my_name;
               sieget_ipc.data = malloc(strlen(s) + 1 + strlen(vd->pageurl) - 1);
               strcpy((char *)sieget_ipc.data, s);
@@ -1383,7 +1383,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
     {
       if (strcmp_nocase(ipc->name_to,ipc_my_name)==0)
       {
-        //Если приняли свое собственное сообщение, значит запускаем чекер
+        //Р•СЃР»Рё РїСЂРёРЅСЏР»Рё СЃРІРѕРµ СЃРѕР±СЃС‚РІРµРЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ, Р·РЅР°С‡РёС‚ Р·Р°РїСѓСЃРєР°РµРј С‡РµРєРµСЂ
         switch (msg->submess)
         {
         case IPC_DATA_ARRIVED:
@@ -1407,7 +1407,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             }
             mfree(ipc->data);
             mfree(ipc);
-            csm_result=0;  //Обработали сообщение 
+            csm_result=0;  //РћР±СЂР°Р±РѕС‚Р°Р»Рё СЃРѕРѕР±С‰РµРЅРёРµ 
           }
           break;
         case IPC_DATA_END:
@@ -1479,7 +1479,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
               }
             }
             mfree(ipc);
-            csm_result=0;  //Обработали сообщение 
+            csm_result=0;  //РћР±СЂР°Р±РѕС‚Р°Р»Рё СЃРѕРѕР±С‰РµРЅРёРµ 
           }
           break; 
         case IPC_GOTO_URL:
@@ -1491,7 +1491,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
             view_url_mode=MODE_URL;
             goto_url=NULL;
             csm->view_id=CreateViewGUI(0, ipc->data);
-            csm_result=0;  //Обработали сообщение
+            csm_result=0;  //РћР±СЂР°Р±РѕС‚Р°Р»Рё СЃРѕРѕР±С‰РµРЅРёРµ
             mfree(ipc);
           }
           break;
@@ -1506,7 +1506,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
                 csm->view_id=CreateViewGUI(1, ipc->data);
             }
             _safe_free(goto_url);
-            csm_result=0;   //Обработали сообщение 
+            csm_result=0;   //РћР±СЂР°Р±РѕС‚Р°Р»Рё СЃРѕРѕР±С‰РµРЅРёРµ 
             mfree(ipc);
           }
           break;
@@ -1540,7 +1540,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           }
           goto L_CLOSE;
         }
-      case 0xFE: //Пробуем идти по стеку назад
+      case 0xFE: //РџСЂРѕР±СѓРµРј РёРґС‚Рё РїРѕ СЃС‚РµРєСѓ РЅР°Р·Р°Рґ
         {
           mfree(PopPageFromStack());
           if ((goto_url=PopPageFromStack()))
@@ -1561,7 +1561,7 @@ static int maincsm_onmessage(CSM_RAM *data, GBS_MSG *msg)
           else
             goto L_CLOSE;
         }
-      case 0xFF: //Есть куда пойти
+      case 0xFF: //Р•СЃС‚СЊ РєСѓРґР° РїРѕР№С‚Рё
         if (goto_url)
         {
           SUBPROC((void*)GotoLink, 0);
@@ -1765,7 +1765,7 @@ int SaveAuthCode(char *prefix, char *code)
   int f;
   unsigned int err;
   char * authdata_file = getSymbolicPath("$ballet\\AuthCode");
-  f=fopen(authdata_file,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&err); //Создаем файл
+  f=fopen(authdata_file,A_ReadWrite+A_BIN+A_Create+A_Truncate,P_READ+P_WRITE,&err); //РЎРѕР·РґР°РµРј С„Р°Р№Р»
   mfree(authdata_file);
   if(f==-1) return 0;
   fwrite(f,prefix,6,&err);
@@ -1809,7 +1809,7 @@ int main(const char *exename, const char *filename)
   char dummy[sizeof(MAIN_CSM)];
   char *path=strrchr(exename,'\\');
   int l;
-  if (!path) return 0; //Фигня какая-то
+  if (!path) return 0; //Р¤РёРіРЅСЏ РєР°РєР°СЏ-С‚Рѕ
   path++;
   l=path-exename;
   InitConfig();
