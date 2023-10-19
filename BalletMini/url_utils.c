@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "url_utils.h"
 
 /* URL handling.

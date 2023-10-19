@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "view.h"
 #include "additems.h"
 #include "readimg.h"

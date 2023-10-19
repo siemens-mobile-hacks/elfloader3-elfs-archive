@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "string_works.h"
 #include "file_works.h"
 

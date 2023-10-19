@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "inet.h"
 #include "local_ipc.h"
 #include "string_works.h"
@@ -200,7 +201,7 @@ static void free_socket(void)
 
 #ifdef SEND_TIMER
 static void bsend(int len, void *p);
-static void resend(void)
+static void resend(GBSTMR *)
 {
   SUBPROC((void*)bsend,0,0);
 }

@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include <jpeglib/jpeglib.h>
 #include <jpeglib/jerror.h>
 #include "readimg.h"
@@ -12,12 +13,12 @@ typedef struct {
   IMGHDR * img_h;
 }PP;
 
-void *xmalloc(int x,int n)
+void *xmalloc(png_struct *png, png_size_t n)
 {
   return malloc(n);
 }
 
-void xmfree(int x,void* ptr)
+void xmfree(png_struct *png, void *ptr)
 {
   mfree(ptr);
 }
@@ -33,7 +34,7 @@ void read_data_fn(png_structp png_ptr, png_bytep data, png_size_t length)
 IMGHDR *read_pngimg(const char *buf)
 {
   PP pp;
-  IMGHDR * img_hc;
+  IMGHDR * img_hc=NULL;
   png_structp png_ptr=NULL;
   png_infop info_ptr=NULL;
   png_uint_32 rowbytes;
@@ -46,7 +47,7 @@ IMGHDR *read_pngimg(const char *buf)
   if  (!png_check_sig((png_bytep)pp.p,PNG_BYTES_TO_CHECK)) return 0; // не пнг
   pp.p+=PNG_BYTES_TO_CHECK;
   
-  png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,(png_malloc_ptr)xmalloc,(png_free_ptr)xmfree);
+  png_ptr = png_create_read_struct_2("1.2.5", (png_voidp)0, 0, 0, (png_voidp)0,xmalloc,xmfree);
   if (!png_ptr) goto L_CLOSE_FILE;
   
   info_ptr = png_create_info_struct(png_ptr);
@@ -157,8 +158,8 @@ IMGHDR *read_jpgimg(const char *buf)
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
 
-  IMGHDR * img_hc;
-  unsigned short *img, *iimg;
+  IMGHDR * img_hc=NULL;
+  unsigned short *img=NULL, *iimg=NULL;
   JSAMPARRAY buffer;
   char *row;
   

@@ -44,6 +44,7 @@ S + T S L B D T B S E T B h_opf_1 B Y L T B E L T B E L
 */
 
 #include <swilib.h>
+#include <stdlib.h>
 #include "parse_oms.h"
 #include "additems.h"
 #include "string_works.h"
@@ -90,12 +91,12 @@ unsigned int _rlong(VIEWDATA *vd)
 }
 
 // Функции-заглушки для ZLib
-void* zcalloc(int unk,size_t nelem, size_t elsize)
+void* zcalloc(void *priv, unsigned int nelem, unsigned int elsize)
 {
   return (malloc(nelem*elsize));
 }
 
-void zcfree(int unk, void* ptr)
+void zcfree(void *priv, void *ptr)
 {
   mfree(ptr);
 }
@@ -104,7 +105,7 @@ void zcfree(int unk, void* ptr)
 
 void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
 {
-  int i;
+  int i = 0;
   unsigned int k;
   int err;
   char s[128];
@@ -175,8 +176,8 @@ void OMS_DataArrived(VIEWDATA *vd, const char *buf, int len)
         L_ZINIT:
           //Производим инициализацию ZLib
           zeromem(vd->zs=malloc(sizeof(z_stream)),sizeof(z_stream));
-          vd->zs->zalloc = (alloc_func)zcalloc;
-          vd->zs->zfree = (free_func)zcfree;
+          vd->zs->zalloc = zcalloc;
+          vd->zs->zfree = zcfree;
           vd->zs->opaque = (voidpf)0;
           err = inflateInit2(vd->zs,-MAX_WBITS);
           if(err!=Z_OK)

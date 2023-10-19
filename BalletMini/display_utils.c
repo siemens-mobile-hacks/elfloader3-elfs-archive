@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "view.h"
 #include "display_utils.h"
 #include "siemens_unicode.h"

@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "view.h"
 #include "parse_oms.h"
 #include "main.h" 
@@ -1631,7 +1632,8 @@ static const struct
     NAMECSM_MAGIC1,
     NAMECSM_MAGIC2,
     0x0,
-    139
+    139,
+    0
   }
 };
 

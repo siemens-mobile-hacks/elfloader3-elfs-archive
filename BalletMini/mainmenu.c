@@ -1,4 +1,5 @@
 #include <swilib.h>
+#include <stdlib.h>
 #include "rect_patcher.h"
 #include "view.h"
 #include "main.h"
