@@ -2,7 +2,7 @@
 #include <strings.h>
 #include <conf_loader.h>
 #include "ftdemo.h"
-#include "ALIB\io.h"
+#include "ALIB/io.h"
 
 unsigned short maincsm_name_body[140];
 unsigned int MAINCSM_ID = 0;
@@ -39,9 +39,6 @@ int scr_w,scr_h;
 
 static void OnRedraw(MAIN_GUI *data)
 {
-#ifdef ELKA
-    DisableIconBar(1);
-#endif
     //DrawRoundedFrame(0,0,scr_w,scr_h,0,0,0,clrBlack,clrWhite);
     DrawWindow ();
 
@@ -53,14 +50,14 @@ static void OnRedraw(MAIN_GUI *data)
 
 static void onCreate(MAIN_GUI *data, void *(*malloc_adr)(int))
 {
-    //data->ws = AllocWS(128);
+//    data->ws = AllocWS(128);
     data->gui.state=1;
 }
 
 static void onClose(MAIN_GUI *data, void (*mfree_adr)(void *))
 {
     data->gui.state=0;
-    //FreeWS( data->ws );
+//    FreeWS( data->ws );
 
     OnCloseWin ();
 }
@@ -69,7 +66,9 @@ static void onFocus(MAIN_GUI *data, void *(*malloc_adr)(int), void (*mfree_adr)(
 {
     data->gui.state=2;
     DisableIDLETMR();
-
+#ifdef ELKA
+    DisableIconBar(1);
+#endif
 }
 
 static void onUnfocus(MAIN_GUI *data, void (*mfree_adr)(void *))
@@ -99,7 +98,7 @@ static int OnKey(MAIN_GUI *data, GUI_MSG *msg)
     return(0);
 }
 
-extern void kill_data(void *p, void (*func_p)(void *));
+// extern void kill_data(void *p, void (*func_p)(void *));
 
 int method8(void)
 {
@@ -131,8 +130,8 @@ static void maincsm_oncreate(CSM_RAM *data)
 {
     scr_w=ScreenW()-1;
     scr_h=ScreenH()-1;
-    MAIN_CSM*csm=(MAIN_CSM*)data;
-    MAIN_GUI *main_gui = new MAIN_GUI [sizeof(MAIN_GUI)];
+    MAIN_CSM *csm=(MAIN_CSM*)data;
+    MAIN_GUI *main_gui = new MAIN_GUI;
     zeromem(main_gui,sizeof(MAIN_GUI));
     main_gui->gui.canvas=(RECT *)(&Canvas);
     main_gui->gui.methods=(void *)gui_methods;
@@ -253,7 +252,7 @@ int main (char *exename, char *fname)
 
     InitConfig();
 
-    SetCurFile (fname);
+    SetCurFile ("0:\\ZBin\\fonts\\Ubuntu-R.ttf");
 
     //LibWork ();
 

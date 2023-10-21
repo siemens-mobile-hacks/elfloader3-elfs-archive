@@ -92,7 +92,8 @@ void SetCurPath (char *fname){
 }
 
 void SetCurFile (char *fname){
-  sprintf (file, "%s", GetFileName (fname));
+  sprintf (file, "%s",  (fname));
+//  sprintf (file, "%s", GetFileName (fname));
 }
 
 char *GetCurFile (){

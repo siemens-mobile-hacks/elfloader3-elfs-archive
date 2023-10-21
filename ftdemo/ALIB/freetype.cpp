@@ -1,8 +1,8 @@
 #include <swilib.h>
 #include <de/freetype.h>
+#include "freetype.h"
 
-
-ft_font *ft_open(const char *font, uint16_t size, int load)
+ft_font *_ft_open(const char *font, uint16_t size, int load)
 {
 
 
@@ -30,7 +30,7 @@ release:
 }
 
 
-void ft_close(ft_font *f)
+void _ft_close(ft_font *f)
 {
     if(!f) return;
     if(!f->fte) return;

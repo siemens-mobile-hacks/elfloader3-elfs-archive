@@ -1,5 +1,7 @@
-#include "ALIB\img.h"
-#include "ALIB\io.h"
+#include "ALIB/img.h"
+#include "ALIB/io.h"
+#include "ALIB/freetype.h"
+#include <de/freetype.h>
 
 ///System draw
 #ifdef WIN
@@ -58,7 +60,7 @@ bool IsWinStarted=0;
 bool IsFontCfgUpdate=1;
 AIMG buffer;
 //TFont font;
-ft_font *ftf;
+ft_font *ftf = NULL;
 
 void DrawWindow (){
     if (!IsWinStarted){
@@ -66,7 +68,7 @@ void DrawWindow (){
         int scrH=ScreenH ();
         int scrW=ScreenW ();
         buffer.Create (scrW, scrH, 8);
-        ftf = ft_open(GetCurFile (), CFG_FONT_SIZE);
+        ftf = _ft_open(GetCurFile (), CFG_FONT_SIZE, 0);
     }
 
     color clr=RGBA (128, 128, 128, 255);
@@ -79,19 +81,20 @@ void DrawWindow (){
 
         //font.Init ("0:\\Zbin\\fonts\\normal.atf");
 
-        ftf = ft_open(GetCurFile (), CFG_FONT_SIZE);
+        ftf = _ft_open(GetCurFile (), CFG_FONT_SIZE, 0);
 
         IsFontCfgUpdate=0;
     }
 
-
     buffer.DrawRect (0, 0, buffer.GetW(), buffer.GetH(), clr);
 
-    buffer.DrawScrollStringLine ("Hello world!", ftf, 0, 50, buffer.GetW(), 50+GetFontH (ftf), 0, TEXT_ALIGNMIDDLE, white);
+	if (ftf) {
+		buffer.DrawScrollStringLine ("Hello world!", ftf, 0, 50, buffer.GetW(), 50+GetFontH (ftf), 0, TEXT_ALIGNMIDDLE, white);
+	}
 
     DrawAIMG (&buffer, 0, 0);
 }
 
 void OnCloseWin (){
-    ft_close(ftf);
+    _ft_close(ftf);
 }

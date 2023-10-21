@@ -1,3 +1,5 @@
+#pragma once
+
 #include "platform.h"
 #include "include.h"
 //#include "font.h"
