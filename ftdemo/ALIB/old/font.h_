@@ -1,0 +1,36 @@
+#include "platform.h"
+
+typedef struct{
+  int w;
+  int h;
+  int left;
+  int top;
+  unsigned char *buffer;
+}Glyph;
+
+#define MAX_COUNT 192
+#define FONT_COUNT 4
+
+class  TFont{
+
+	int count_;
+	
+	int YMax_;
+	int glyphCount_;
+	int ltr_w_;
+
+public:
+  Glyph *glyph_;
+        TFont (){ count_=MAX_COUNT; YMax_=0; glyphCount_=0; ltr_w_=0; glyph_=new Glyph [count_]; }
+	~TFont ();
+        
+        int LoadGlyphs (unsigned char *buf, int count);
+	int GetMaxFontYSize();
+        
+	void Init (char *fname);
+        
+        int GetFontH (){ return YMax_;}
+        int GetInterval (){ return ltr_w_; }
+        int GetStringW (char *str);
+};
+
