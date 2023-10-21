@@ -252,7 +252,7 @@ int main (char *exename, char *fname)
 
     InitConfig();
 
-    SetCurFile ("0:\\ZBin\\fonts\\Ubuntu-R.ttf");
+    SetCurFile (fname);
 
     //LibWork ();
 
