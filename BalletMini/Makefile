@@ -24,5 +24,5 @@ SOURCES += upload.c
 SOURCES += urlstack.c
 SOURCES += url_utils.c
 
-SDK_PATH ?= sdk
+SDK_PATH ?= ../sdk
 include $(SDK_PATH)/multi-target.mk
