@@ -1,7 +1,6 @@
 #include <swilib.h>
 #include <stdlib.h>
-#include <jpeglib/jpeglib.h>
-#include <jpeglib/jerror.h>
+#include <jpeglib.h>
 #include "readimg.h"
 
 #define PNG_BYTES_TO_CHECK 8
@@ -181,7 +180,8 @@ IMGHDR *read_jpgimg(const char *buf)
   }
   jpeg_create_decompress(&cinfo);
   
-  jpeg_stdio_src(&cinfo, (void *)buf);
+  //jpeg_stdio_src(&cinfo, (void *)buf);
+  jpeg_mem_src(&cinfo, (void *)buf, 240*320*4);
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
   
