@@ -3,7 +3,6 @@
 #include "math.h"
 #include "siemens_unicode.h"
 
-
 color RGBA(unsigned char R, unsigned char G, unsigned char B, unsigned char A){
 //#ifdef WIN
 	//color t={B,G,R,A};
@@ -31,13 +30,9 @@ struct POINT{
   int y;
 };
 
-/*
-int max(int x, int y){ return x > y ? x : y;}
+static inline int max(int x, int y){ return x > y ? x : y;}
 
-int min(int x, int y){ return x < y ? x : y;}
-
-int abs (int n){ return n>=0 ? n : -n;}
-*/
+static inline int min(int x, int y){ return x < y ? x : y;}
 
 #endif
 

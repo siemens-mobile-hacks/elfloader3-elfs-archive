@@ -1,7 +1,7 @@
 PROJECT = ftdemo
 
 OPT := -Os
-LDLIBS += -lcrt -lcrt_helper -lgcc -lm-1.0 -lc-1.0 -lstdc++-1.2.2 -lsupc++-1.2.2 -lft-2.4.6-1 -lft_server
+LDLIBS += -lcrt -lcrt_helper -lgcc -lm -lc -lc++ -lsupc++ -lft -lft_server
 
 SOURCES += config_data.c
 SOURCES += main.cpp conf_loader.cpp ftdemo.cpp

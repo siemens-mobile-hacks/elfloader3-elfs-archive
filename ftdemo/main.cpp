@@ -1,6 +1,10 @@
 #include <swilib.h>
 #include <strings.h>
 #include <conf_loader.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "ftdemo.h"
 #include "ALIB/io.h"
 
@@ -244,15 +248,18 @@ success:;
 
 int main (char *exename, char *fname)
 {
+//	__setup_stdout_fd(open("0:\\Misc\\stdout.txt", O_CREAT | O_TRUNC | O_WRONLY));
+//	__setup_stderr_fd(open("0:\\Misc\\stderr.txt", O_CREAT | O_TRUNC | O_WRONLY));
+	
+    InitConfig();
+
+    SetCurFile (fname);
+
     MAIN_CSM main_csm;
     LockSched();
     UpdateCSMname();
     CreateCSM(&MAINCSM.maincsm,&main_csm,0);
     UnlockSched();
-
-    InitConfig();
-
-    SetCurFile (fname);
 
     //LibWork ();
 

@@ -1,7 +1,7 @@
 PROJECT = BalletMini
 
 OPT := -Os
-LDLIBS += -lcrt -lcrt_helper -lgcc -lc-1.0 -ljpeg-62 -lpng-12 -lz-1.2.5 -lm-1.0
+LDLIBS += -lcrt -lcrt_helper -lgcc -lc -ljpeg -lpng -lz -lm
 CFLAGS += -mthumb -Wno-missing-prototypes -Wno-redundant-decls -Wno-sign-compare -Wno-implicit-fallthrough
 
 SOURCES += main.c
