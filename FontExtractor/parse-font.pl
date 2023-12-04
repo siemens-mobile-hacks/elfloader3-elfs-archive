@@ -9,6 +9,7 @@ use GD;
 
 my $font = -1;
 
+my @fonts_info;
 my @fonts;
 my $prev_pixels;
 
@@ -23,6 +24,10 @@ for my $line (split(/\r\n|\n/, scalar(read_file($file)))) {
 	if ($line =~ /FONT:(\d+)/) {
 		$font = $1;
 		$fonts[$font] = [];
+		$fonts_info[$font] = {
+			w	=> 0,
+			h	=> 0,
+		};
 	}
 	
 	if ($line =~ /^([a-f0-9]+),(\d+),(\d+):(.*?)$/si) {
@@ -33,6 +38,10 @@ for my $line (split(/\r\n|\n/, scalar(read_file($file)))) {
 		die "broken b64: $4" if !defined $pixels;
 		$fonts[$font]->[$codepoint] = [$codepoint, $w, $h, $pixels];
 		$prev_pixels = $pixels;
+		
+		$fonts_info[$font]->{h} = $h if !$fonts_info[$font]->{h};
+		$fonts_info[$font]->{w} = $w if $w > $fonts_info[$font]->{w};
+		die sprintf("U+%04X: invalid height!") if $fonts_info[$font]->{h} != $h;
 	}
 	
 	if ($line =~ /^([a-f0-9]+),(\d+),(\d+)&$/si) {
@@ -41,6 +50,10 @@ for my $line (split(/\r\n|\n/, scalar(read_file($file)))) {
 		my $h = int($3);
 		die "broken prev_pixels" if !defined $prev_pixels;
 		$fonts[$font]->[$codepoint] = [$codepoint, $w, $h, $prev_pixels];
+		
+		$fonts_info[$font]->{h} = $h if !$fonts_info[$font]->{h};
+		$fonts_info[$font]->{w} = $w if $w > $fonts_info[$font]->{w};
+		die sprintf("U+%04X: invalid height!") if $fonts_info[$font]->{h} != $h;
 	}
 	
 	if ($line =~ /^([a-f0-9]+),(\d+),(\d+)#(\d+)$/si) {
@@ -58,7 +71,13 @@ print F JSON::Tiny::to_json($icons)."\n";
 close F;
 
 for my $font (keys @fonts) {
+	my $font_data = "";
+	
 	system("mkdir -p '$out_dir/$font'");
+	
+	my $fi = $fonts_info[$font];
+	
+	print "Font $font ".$fi->{w}."x".$fi->{h}."\n";
 	
 	my $chars = $fonts[$font];
 	
