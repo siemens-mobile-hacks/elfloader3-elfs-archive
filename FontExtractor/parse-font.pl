@@ -123,10 +123,10 @@ for my $font (keys @fonts) {
 			}
 		}
 		
-		if (!$is_empty) {
+		# if (!$is_empty) {
 			open F, ">$out_dir/$font/".sprintf("%04x", $codepoint).".png";
 			print F $im->png;
 			close F;
-		}
+		# }
 	}
 }

@@ -32,6 +32,22 @@ static void gui_oncreate(GUI *data, malloc_func_t malloc_fn) {
 	gui->ws = AllocWS(128);
 }
 
+static int get_max_font_size() {
+	int sizes[] = {
+		FONT_LARGE, FONT_LARGE_BOLD, FONT_LARGE_ITALIC, FONT_LARGE_ITALIC_BOLD,
+		FONT_MEDIUM, FONT_MEDIUM_BOLD, FONT_MEDIUM_ITALIC, FONT_MEDIUM_ITALIC_BOLD,
+		FONT_NUMERIC_SMALL, FONT_NUMERIC_SMALL_BOLD, FONT_NUMERIC_XSMALL, 
+		FONT_SMALL, FONT_SMALL_BOLD, FONT_SMALL_ITALIC, FONT_SMALL_ITALIC_BOLD,
+		FONT_NUMERIC_LARGE, FONT_NUMERIC_MEDIUM
+	};
+	int font = 0;
+	for (int i = 0; i < (sizeof(sizes) / sizeof(sizes[0])); i++) {
+		if (font < sizes[i])
+			font = sizes[i];
+	}
+	return font;
+}
+
 static void gui_onredraw(GUI *data) {
 	MAIN_GUI *gui = (MAIN_GUI *) data;
 	
@@ -158,7 +174,7 @@ static void gui_onredraw(GUI *data) {
 			g_state = 0;
 			SUBPROC((void*) REDRAW);
 		} else {
-			if (g_font < 8) {
+			if (g_font < get_max_font_size()) {
 				g_font++;
 				printf("FONT:%d\r\n", g_font);
 				g_state = 0;
@@ -310,7 +326,7 @@ int main(char *exe, char *fname, void *p1) {
 	setvbuf(stdout, NULL, _IONBF, 0);
 	
 	usart_init();
-	usart_set_speed(1600000);
+	usart_set_speed(3200000);
 	
 	printf("Running main()...\r\n");
 	

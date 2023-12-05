@@ -10,7 +10,9 @@ use GD::Image;
 
 my $DIR = $ARGV[0];
 
-for (my $font = 0; $font <= 8; $font++) {
+for (my $font = 0; $font <= 32; $font++) {
+	next if !-d "$DIR/$font";
+	
 	my $codepoints = [];
 	for my $file (glob("$DIR/$font/*.png")) {
 		next if $file !~ /\/([a-f0-9]+)\.png$/i;
@@ -63,7 +65,7 @@ for (my $font = 0; $font <= 8; $font++) {
 		$range->{end} = $codepoint;
 	}
 	
-	my $font_data = "";
+	my $font_data = "SIEFONT\0";
 	
 	$font_data .= pack("v", scalar(@ranges));
 	

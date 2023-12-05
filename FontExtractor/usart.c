@@ -25,7 +25,7 @@ void usart_set_speed(uint32_t baudrate) {
 	usart_calc_bg_fdv(baudrate, &bg, &fdv);
 	
 	LockSched();
-	USART_CLC(USART0) = 2 << MOD_CLC_RMC_SHIFT;
+	USART_CLC(USART0) = 1 << MOD_CLC_RMC_SHIFT;
 	USART_CON(USART0) &= ~USART_CON_CON_R;
 	USART_BG(USART0) = bg;
 	USART_FDV(USART0) = fdv;
@@ -41,7 +41,7 @@ void usart_putc(char c) {
 
 static uint32_t usart_calc_bg_fdv(uint32_t baudrate, uint32_t *bg, uint32_t *fdv) {
 	int div;
-	uint32_t max_baudrate = 52000000 / 2 / USART_CLOCK_DIV;
+	uint32_t max_baudrate = 52000000 / USART_CLOCK_DIV;
 	if (baudrate >= max_baudrate) { // Maximum baudrate
 		*bg = 0;
 		*fdv = 0;
