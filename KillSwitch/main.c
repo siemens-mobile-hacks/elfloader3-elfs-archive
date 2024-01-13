@@ -30,7 +30,7 @@ static void on_timer_expire(unsigned long id) {
 		}
 	}
 	
-	int next_timeout = PRESS_TIMEOUT;
+	int next_timeout = TIMER_PERIOD;
 	if (pressed) {
 		if (!last_press_time)
 			last_press_time = stopwatch_get();
