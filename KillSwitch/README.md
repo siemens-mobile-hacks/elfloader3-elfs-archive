@@ -10,5 +10,5 @@
 
 # Настройка
 1. Закинуть kill-switch.elf в 0:\zbin\daemons\ и запустить его.
-2. Посмотреть значения PORT0-PORT2 для желаемой комбинации клавиш с помощью эльфа (https://github.com/siemens-mobile-hacks/elfloader3-elfs-archive/tree/main/KeypadTester)[KeypadTester]
+2. Посмотреть значения PORT0-PORT2 для желаемой комбинации клавиш с помощью эльфа [KeypadTester](https://github.com/siemens-mobile-hacks/elfloader3-elfs-archive/tree/main/KeypadTester).
 3. Прописать их в конфиге KillSwitch.bcfg в соответствующих полях.
