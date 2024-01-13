@@ -36,7 +36,7 @@ static void on_timer_expire(unsigned long id) {
 			last_press_time = stopwatch_get();
 		
 		if (stopwatch_elapsed_ms(last_press_time) >= PRESS_TIMEOUT) {
-			volatile void (*reset_func)() = (void (*)()) 0xDEAD926E;
+			volatile void (*reset_func)() = (void (*)()) 0;
 			reset_func();
 		}
 		next_timeout = PRESS_TIMEOUT / 2;
