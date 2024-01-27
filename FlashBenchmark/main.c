@@ -1,5 +1,7 @@
 #include <swilib.h>
 #include <pmb887x.h>
+
+#include "sys.h"
 #include "stopwatch.h"
 
 #define BENCH_MMC_WR_SIZE	4 * 1024 * 1024
@@ -28,6 +30,7 @@ enum {
 	BENCH_STATE_DONE,
 	BENCH_STATE_SELECT_CHUNK,
 	BENCH_STATE_ERROR,
+	BENCH_STATE_DEBUG,
 	BENCH_STATE_PREPARING,
 	BENCH_STATE_WORKING,
 };
@@ -148,7 +151,7 @@ static void gui_oncreate(GUI *data, malloc_func_t malloc_fn) {
 	MAIN_GUI *gui = (MAIN_GUI *) data;
 	
 	gui->base.state = CSM_GUI_STATE_UNFOCUSED;
-	gui->ws = AllocWS(128);
+	gui->ws = AllocWS(1024);
 }
 
 static void gui_onredraw(GUI *data) {
@@ -165,6 +168,20 @@ static void gui_onredraw(GUI *data) {
 				"[2] Write bench (SD)\n"
 				"[3] Read bench (FFS)\n"
 				"[4] Write bench (FFS)\n"
+				"[#] SDIO info\n"
+				"[*] %s SD overclock",
+				(mmci_read_reg(&MCI_CLOCK) & MCI_CLOCK_BYPASS) != 0 ? "Disable" : "Enable"
+			);
+		break;
+		
+		case BENCH_STATE_DEBUG:
+			wsprintf(gui->ws,
+				"MCI_CLOCK: %08X\n"
+				"MCI_POWER: %08X\n"
+				"MCI_DATATIMER: %08X\n",
+				mmci_read_reg(&MCI_CLOCK),
+				mmci_read_reg(&MCI_POWER),
+				mmci_read_reg(&MCI_DATATIMER)
 			);
 		break;
 		
@@ -305,6 +322,30 @@ static int gui_onkey(GUI *data, GUI_MSG *msg) {
 					bench_state.state = BENCH_STATE_SELECT_CHUNK;
 				}
 				break;
+				
+				case '*':
+				{
+					uint32_t clock = mmci_read_reg(&MCI_CLOCK);
+					if ((clock & 0xFF) == 0) {
+						if ((clock & MCI_CLOCK_BYPASS)) {
+							clock &= ~MCI_CLOCK_BYPASS;
+							mmci_write_reg(&MCI_DATATIMER, 0x3938700);
+						} else {
+							clock |= MCI_CLOCK_BYPASS;
+							mmci_write_reg(&MCI_DATATIMER, 0x3938700*4);
+						}
+						mmci_write_reg(&MCI_CLOCK, clock);
+					} else {
+						char tmp[1024];
+						sprintf(tmp, "Unknown MMCI_CLOCK: %d\n", (clock & 0xFF));
+						ShowMSG(0, (int) tmp);
+					}
+				}
+				break;
+				
+				case '#':
+					bench_state.state = BENCH_STATE_DEBUG;
+				break;
 			}
 		} else if (bench_state.state == BENCH_STATE_SELECT_CHUNK) {
 			switch (msg->gbsmsg->submess) {
@@ -427,60 +468,3 @@ int main(char *exe, char *fname, void *p1) {
 	
 	return 0;
 }
-
-/*
-int main(char *exe, char *fname, void *p1) {
-	stopwatch_init();
-	
-	// void (*MMCI_SetClock)(uint32_t flags) = 0xA04E2168;
-	// MMCI_SetClock(0 | MCI_CLOCK_BYPASS);
-	
-	uint64_t start = stopwatch_get();
-	
-	// Drop cache
-	FILE *fp = fopen("4:\\test2.bin", "r");
-	uint8_t buff[4096];
-	if (fp) {
-		while (!feof(fp))
-			fread(buff, 1, 4096, fp);
-		fclose(fp);
-	} else {
-		ShowMSG(0, (int) "Can't open 4:\\test2.bin");
-		kill_elf();
-		return 0;
-	}
-	
-	int readed = 0;
-	int iter = 1;
-	for (int i = 0; i < iter; i++) {
-		FILE *fp = fopen("4:\\test.bin", "r");
-		fclose(fp);
-		
-		fp = fopen("4:\\test.bin", "r");
-		if (fp) {
-			uint8_t buff[4096];
-			while (!feof(fp)) {
-				int ret = fread(buff, 1, 4096, fp);
-				if (ret > 0)
-					readed += ret;
-			}
-			fclose(fp);
-		} else {
-			ShowMSG(0, (int) "Can't open 4:\\test.bin");
-			kill_elf();
-			return 0;
-		}
-	}
-	
-	uint32_t elapsed = stopwatch_elapsed_ms(start);
-	uint32_t speed = readed / elapsed * 1000 / 1024;
-	
-	char tmp[1024];
-	sprintf(tmp, "elapsed: %u kb [%d]/s", speed, readed / 1024);
-	ShowMSG(0, (int) tmp);
-	
-	kill_elf();
-	
-	return 0;
-}
-*/
